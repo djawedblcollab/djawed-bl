@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="images.jpj" href="Tweet _ Twitter.jpg" link/> 
+<title>Djawed bl</title>
+<meta name="description" content="Portfolio premium — montage vidéo & motion design. Animations avancées, background animé, musique chill." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<!-- GSAP pour animations avancées -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+
+<style>
+  :root{
+    --bg:#05050a;
+    --card:#0f1216;
+    --muted:#a7b0bb;
+    --accent:#9b7bff;
+    --accent-2:#00ffe6;
+    --glass: rgba(255,255,255,0.03);
+    --radius:14px;
+    --max-w:1200px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:#eef2f8;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  a{color:inherit}
+  button{font-family:inherit}
+
+  /* Canvas background covers everything */
+  canvas#bgCanvas{position:fixed;inset:0;z-index:0;display:block}
+
+  /* Page wrapper */
+  .wrap{position:relative;z-index:5;max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+  /* Header */
+  header{position:fixed;top:18px;left:0;right:0;z-index:60;display:flex;justify-content:center;pointer-events:none}
+  .nav{width:100%;max-width:var(--max-w);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;pointer-events:auto}
+  .brand{font-weight:800;letter-spacing:0.6px;color:#fff}
+  .brand span{color:var(--accent)}
+  nav ul{display:flex;gap:12px;list-style:none;margin:0;padding:0}
+  nav a{color:rgba(230,240,255,0.9);text-decoration:none;font-weight:600;padding:8px 10px;border-radius:10px;transition:all .18s}
+  nav a:hover{background:linear-gradient(90deg,rgba(155,123,255,0.12), rgba(0,255,230,0.03));color:#fff}
+  .controls{display:flex;gap:8px;align-items:center}
+
+  .pill{background:var(--glass);padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--muted)}
+  .pill.active{background:linear-gradient(90deg,var(--accent),#6d35f5);color:#fff;border:none;box-shadow:0 8px 30px rgba(155,123,255,0.08)}
+
+  /* Hero */
+  .hero{min-height:86vh;display:flex;align-items:center;gap:36px;padding-top:72px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:center}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:0.6px;margin-bottom:10px}
+  h1{font-size:clamp(34px,6vw,56px);line-height:0.95;margin:0;letter-spacing:-1px}
+  .lead{color:var(--muted);font-size:1.05rem;max-width:64ch;margin-top:12px}
+  .cta-row{display:flex;gap:12px;margin-top:18px}
+  .btn-primary{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,var(--accent),#6d35f5);color:white;font-weight:700;border:none;cursor:pointer;box-shadow:0 10px 30px rgba(139,92,246,0.09)}
+  .btn-ghost{padding:10px 14px;border-radius:12px;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+
+  .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+  .hero-thumb{width:100%;height:240px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);background:linear-gradient(180deg,#091018,#072028);font-weight:700}
+
+  /* Sections */
+  section{padding:86px 0}
+  h2{font-size:28px;margin:0 0 12px;color:#fff}
+  .sub{color:var(--muted);margin-bottom:18px}
+
+  /* Services */
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 12px 30px rgba(2,6,23,0.6)}
+  .card h3{margin:0 0 8px;color:var(--accent)}
+  .price{margin-top:12px;font-weight:800}
+
+  /* Portfolio */
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .filter-btn{padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
+  .filter-btn.active{background:linear-gradient(90deg, rgba(139,92,246,0.12), rgba(0,255,230,0.03));color:#fff}
+
+  .portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-top:8px}
+  .project{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,#08090b,#0f1216)}
+  .project img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .45s ease}
+  .project .meta{position:absolute;left:12px;bottom:12px;color:#fff;padding:8px 12px;border-radius:10px;background:linear-gradient(90deg, rgba(0,0,0,0.45), rgba(0,0,0,0.2));backdrop-filter:blur(4px)}
+  .project:hover img{transform:scale(1.06)}
+  .kicker{font-size:0.82rem;color:var(--muted);margin-bottom:6px}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:70;padding:20px}
+  .modal.open{display:flex;animation:fadeInBg .35s ease forwards}
+  .modal-card{width:100%;max-width:1100px;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;overflow:hidden}
+  .modal-close{position:absolute;right:12px;top:12px;border:none;background:transparent;color:var(--muted);font-size:1.2rem;cursor:pointer}
+  .modal-card video{width:100%;height:auto;border-radius:10px;animation:modalZoomIn .45s ease forwards;border:1px solid rgba(139,92,246,0.12);box-shadow:0 0 40px rgba(139,92,246,0.12)}
+  @keyframes modalZoomIn {
+    from { transform: scale(0.96); opacity:0; box-shadow:0 0 0 rgba(139,92,246,0) }
+    to   { transform: scale(1); opacity:1; box-shadow:0 0 40px rgba(139,92,246,0.25) }
+  }
+  @keyframes fadeInBg {
+    from { background: rgba(0,0,0,0); }
+    to { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)); }
+  }
+
+  /* Floating controls */
+  .float-controls{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:10px;z-index:80}
+  .icon-btn{width:54px;height:54px;border-radius:12px;border:none;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+  .icon-btn.active{background:linear-gradient(90deg,var(--accent),#6d35f5);box-shadow:0 12px 34px rgba(139,92,246,0.12)}
+
+  /* Footer */
+  footer{padding:40px 0;color:var(--muted);text-align:center;border-top:1px solid rgba(255,255,255,0.02)}
+
+  /* Responsive */
+  @media(max-width:1000px){.hero-grid{grid-template-columns:1fr}.portfolio-grid{grid-template-columns:repeat(2,1fr)}.services-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){nav ul{display:none}.portfolio-grid{grid-template-columns:1fr}.hero-thumb{height:180px}}
+
+  /* accessibility focus */
+  .project:focus{outline:3px solid rgba(155,123,255,0.25);outline-offset:4px}
+  .contact-section {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+  color: white;
+}
+
+.contact-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.contact-section p {
+  color: #ccc;
+  margin-bottom: 30px;
+}
+
+.btn-primary {
+  background: #88009a;
+  color: #000000;
+  padding: 14px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background: #ffe680;
+  transform: scale(1.05);
+}
+
+</style>
+</head>
+<body>
+
+<!-- Canvas background -->
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<header>
+  <div class="nav wrap" role="navigation" aria-label="Main">
+    <div class="brand">Djawed <span>BL</span></div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <nav>
+        <ul>
+          <li><a href="#home">Accueil</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portfolio">Projets</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="controls">
+        <button class="pill" id="themeToggle" title="Thème">Thème</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="home" style="padding-top:86px;">
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">MONTEUR VIDÉO & MOTION DESIGNER</div>
+        <h1 id="hero-title">J'aide les créateurs et marques à captiver grâce au montage</h1>
+        <p class="lead">Montage YouTube, vidéos publicitaires, Reels & motion design. Rythme, storytelling et optimisation pour chaque plateforme.</p>
+        <div class="cta-row">
+          <button class="btn-primary" id="seeWork">Voir mes projets</button>
+          <a class="btn-ghost" href="#contact">Me contacter</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-hidden="true">
+        <div class="hero-thumb" id="reelThumb">Pas encore Disponible</div>
+        <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+          <div style="flex:1">
+            <div style="font-weight:700">vidéo de présentation</div>
+            <div style="color:var(--muted);font-size:0.95rem;margin-top:6px">Montage dynamique, motion design, color grading</div>
+          </div>
+          <a class="btn-primary" href="#contact" style="padding:10px 12px;font-size:0.9rem">Demande un devis</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" aria-labelledby="services-title">
+    <h2 id="services-title">Services</h2>
+    <div class="sub">Ce que je propose — simple, rapide et adapté à chaque plateforme</div>
+    <div class="services-grid">
+      <div class="card">
+        <h3>🎬 Montage YouTube</h3>
+        <p>Montage complet (cut, rythme, storytelling, sous-titres).</p>
+        <div class="price">À partir de 20 € la minute de montage vidéo.</div>
+      </div>
+      <div class="card">
+        <h3>📱 TikTok / Reels</h3>
+        <p>Formats courts, punchy, optimisés pour la rétention et le partage.</p>
+        <div class="price">À partir de 30€</div>
+      </div>
+      <div class="card">
+        <h3>⚡ Motion Design</h3>
+        <p>Animations visuelles et 3D, extraits explicatifs et publicités vidéo (ADS).</p>
+        <div class="price">À partir de 150€</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" aria-labelledby="portfolio-title">
+    <h2 id="portfolio-title">Quelques réalisations</h2>
+    <div class="sub">Clique sur un projet pour l'ouvrir en grand</div>
+
+    <div class="toolbar">
+      <button class="filter-btn active" data-filter="all">Tous</button>
+      <button class="filter-btn" data-filter="youtube">YouTube</button>
+  
+      <button class="filter-btn" data-filter="tiktok">TikTok</button>
+      <button class="filter-btn" data-filter="motion">Motion</button>
+    </div>
+
+    <div class="portfolio-grid" id="projects">
+      <!-- Remplace images & data-media par les tiennes -->
+      <div class="project" data-cat="youtube" data-title="YouTube — Montage dynamique" data-desc="Montage complet, sous-titres, chapitres" data-media="videos/video1.mp4" tabindex="0">
+        <video  src="grenoble.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>Montage dynamique</strong></div>
+      </div>      
+
+      <div class="project" data-cat="instagram" data-title="Pub Instagram — Motion" data-desc="15s animation, loop" data-media="videos/video2.mp4" tabindex="0">
+        <video  src="ds.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>vidéo setup</strong></div>
+      </div>
+
+      <div class="project" data-cat="tiktok" data-title="Format court — TikTok" data-desc="Coupe rapide & effets" data-media="videos/video3.mp4" tabindex="0">
+        <video  src="map.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>map animation</strong></div>
+      </div>
+
+      <div class="project" data-cat="motion" data-title="Motion — Logo animé" data-desc="Animation logo & bumper" data-media="videos/video4.mp4" tabindex="0">
+        <video  src="vf im not human motion.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">Motion</div><strong>entraînement</strong></div>
+      </div>
+
+      <div class="project" data-cat="youtube" data-title="Documentaire — Montage" data-desc="Montage long, color grading" data-media="videos/video5.mp4" tabindex="0">
+        <video  src="motion.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">Motion</div><strong>entraînement</strong></div>
+      </div>
+
+      <div class="project" data-cat="instagram" data-title="storytelling" data-desc="Teaser 30s, dynamique" data-media="videos/video6.mp4" tabindex="0">
+        <video  src="le Groupe le Plus SOMBRE du Rap (Mobb Deep).mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>storytelling</strong></div>
+      </div>
+      <div class="project video">
+        <video  src="le Groupe le Plus SOMBRE du Razfp (Mobb Deep)_1.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>storytelling</strong></div>
+      </div>
+      
+      <div class="project video">
+        <video  src="animation 1.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>vidéo setup</strong></div>
+      </div>
+      
+      <div class="project video">
+        <video  src="caca.mp4" muted loop autoplay controls style="width:100%;height:220px;object-fit:cover;border-radius:10px"></video>
+        <div class="meta"><div class="kicker">YouTube</div><strong>storytelling</strong></div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials">
+    <h2>Témoignages</h2>
+    <div class="sub">Ce que disent mes clients</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+      <div class="card">
+        <strong>X</strong>
+        <div style="color:var(--muted);margin-top:8px">X</div>
+      </div>
+      <div class="card">
+        <strong>X</strong>
+        <div style="color:var(--muted);margin-top:8px">X</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <div class="sub">Discutons de ton projet — envoie les infos, je te réponds rapidement.</div>
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:20px">
+      <section id="contact" class="contact-section">
+        <h2>Me Contacter</h2>
+        <p>Une idée, un projet, ou une collaboration ? Écris-moi directement 👇</p>
+      
+        <a 
+          href="mailto:djawedblcontact@gmail.com?subject=Demande%20de%20projet&body=Bonjour%20Djawed,%0AJe%20souhaite%20vous%20contacter%20pour%20un%20projet%20de%20montage%20vidéo.%0A%0AMerci%20de%20me%20recontacter%20:%0A[ton%20nom]%0A[ton%20email]" 
+          class="btn-primary"
+        >
+          📩 Me contacter
+        </a>
+      </section>
+      
+
+      <aside class="card" style="padding:18px">
+        <h3>Infos</h3>
+        <p style="color:var(--muted)">Disponible en freelance • Livraison rapide • Révisions incluses</p>
+        <div style="margin-top:12px"><strong>Email</strong><div style="color:var(--muted);margin-top:6px"><a href="djawedblcontact@gmail.com" style="color:var(--muted);text-decoration:none">djawedblcontact@gmail.com</a></div></div>
+        <div style="margin-top:16px"><strong>Réseaux</strong>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <a class="btn-ghost" href="https://www.instagram.com/flemor.xx/" aria-label="Instagram">Instagram </a>
+            <a class="btn-ghost" href="https://x.com/BlDjawed11176" aria-label="YouTube">Twitter</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer><div style="padding:18px 0">© <strong>Djawed</strong> — Monteur Vidéo · Motion Designer · 2025</div></footer>
+</main>
+
+<!-- Modal / Lightbox -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card" role="document">
+    <button class="modal-close" aria-label="Fermer la fenêtre">✕</button>
+    <div id="modalContent"><!-- injected --></div>
+  </div>
+</div>
+
+<!-- Floating controls: musique on/off + particles on/off -->
+<div class="float-controls" aria-hidden="false">
+  <button id="musicBtn" class="icon-btn" title="Activer / désactiver la musique">🎧</button>
+  <button id="particlesBtn" class="icon-btn active" title="Activer / désactiver particules">✨</button>
+  <button id="muteBtn" class="icon-btn" title="Couper le son">🔈</button>
+</div>
+
+<!-- Audio (royalty-free sample). Remplace src par ta piste achetée si tu veux -->
+<!-- Audio -->
+<audio id="bgMusic" loop preload="auto">
+    <source src="Nintendo DSi Menu - Nintendo DSi Music Extended.mp3" type="audio/mpeg">
+    Ton navigateur ne supporte pas l'audio.
+  </audio>
+  
+  <script>
+  const musicBtn = document.getElementById('musicBtn');
+  const audio = document.getElementById('bgMusic');
+  let musicPlaying = false;
+  
+  musicBtn.addEventListener('click', () => {
+    musicPlaying = !musicPlaying;
+    if (musicPlaying) {
+      audio.play().catch(() => console.log("Autoplay bloqué, clique sur le bouton pour démarrer la musique."));
+      musicBtn.classList.add('active');
+      musicBtn.title = 'Musique activée';
+    } else {
+      audio.pause();
+      musicBtn.classList.remove('active');
+      musicBtn.title = 'Musique désactivée';
+    }
+  });
+  </script>
+  <script>
+
+/* ========== Canvas background: blobs + particles ========== */
+(() => {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width = innerWidth;
+  let H = canvas.height = innerHeight;
+  let particles = [], blobs = [];
+  let particlesEnabled = true;
+
+  class Particle {
+    constructor(){
+      this.reset();
+    }
+    reset(){
+      this.x = Math.random()*W;
+      this.y = Math.random()*H;
+      this.vx = (Math.random()-0.5)*0.6;
+      this.vy = (Math.random()-0.5)*0.6;
+      this.r = Math.random()*1.8 + 0.6;
+      this.alpha = 0.07 + Math.random()*0.18;
+    }
+    move(){
+      this.x += this.vx; this.y += this.vy;
+      if(this.x < -10 || this.x > W+10 || this.y < -10 || this.y > H+10) this.reset();
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(0,255,230,${this.alpha})`;
+      ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  class Blob {
+    constructor(){
+      this.x = Math.random()*W;
+      this.y = Math.random()*H;
+      this.r = Math.max(W,H) * (0.12 + Math.random()*0.18);
+      this.vx = (Math.random()-0.5)*0.25;
+      this.vy = (Math.random()-0.5)*0.25;
+      this.h = 240 + Math.random()*120; // hue
+    }
+    move(){
+      this.x += this.vx; this.y += this.vy;
+      if(this.x < -this.r) this.x = W + this.r;
+      if(this.x > W + this.r) this.x = -this.r;
+      if(this.y < -this.r) this.y = H + this.r;
+      if(this.y > H + this.r) this.y = -this.r;
+    }
+    draw(){
+      const grad = ctx.createRadialGradient(this.x, this.y, this.r*0.12, this.x, this.y, this.r);
+      grad.addColorStop(0, `hsla(${this.h},90%,60%,0.16)`);
+      grad.addColorStop(0.6, `hsla(${(this.h+120)%360},90%,50%,0.08)`);
+      grad.addColorStop(1, `rgba(0,0,0,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function init(){
+    particles = []; blobs = [];
+    const pcount = Math.round((W*H)/90000);
+    for(let i=0;i<pcount;i++) particles.push(new Particle());
+    for(let i=0;i<3;i++) blobs.push(new Blob());
+  }
+
+  function resize(){
+    W = canvas.width = innerWidth;
+    H = canvas.height = innerHeight;
+    init();
+  }
+  addEventListener('resize', resize);
+  init();
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    // base tint
+    ctx.fillStyle = 'rgba(3,5,10,0.65)';
+    ctx.fillRect(0,0,W,H);
+    // blobs
+    ctx.globalCompositeOperation = 'screen';
+    blobs.forEach(b=>{ b.move(); b.draw(); });
+    // particles
+    if(particlesEnabled){
+      ctx.globalCompositeOperation = 'lighter';
+      particles.forEach(p=>{ p.move(); p.draw(); });
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // expose toggle
+  window.setParticlesEnabled = (v) => { particlesEnabled = !!v; };
+})();
+
+/* ========== UI, GSAP, modal, filters, music controls ========== */
+(() => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Hero entrance
+  gsap.from("#hero-title", { y: 40, opacity:0, duration:1, ease:"power3.out", delay:0.15 });
+  gsap.from(".lead", { y: 30, opacity:0, duration:1, ease:"power3.out", delay:0.3 });
+  gsap.from(".hero-card", { y: 30, opacity:0, duration:1, ease:"power3.out", delay:0.45 });
+
+  // section reveal
+  document.querySelectorAll('section').forEach((sec,i)=>{
+    gsap.from(sec, {
+      scrollTrigger: { trigger: sec, start: 'top 80%', toggleActions: 'play none none none' },
+      y: 50, opacity: 0, duration: 0.9, ease: 'power2.out', delay: i*0.05
+    });
+  });
+
+  // smooth scroll for CTA
+  document.getElementById('seeWork').addEventListener('click', (e)=>{
+    e.preventDefault(); document.getElementById('portfolio').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  // Filter projects
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projects = document.querySelectorAll('.project');
+  filterBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      filterBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.filter;
+      projects.forEach(p=>{
+        const ok = (cat === 'all' || p.dataset.cat === cat);
+        if(ok){
+          p.style.display = '';
+          gsap.fromTo(p, {opacity:0, y:20}, {opacity:1, y:0, duration:0.45});
+        } else {
+          gsap.to(p, {opacity:0, duration:0.25, onComplete: ()=> p.style.display='none'});
+        }
+      });
+    });
+  });
+
+  // Modal (lightbox) for projects
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modalContent');
+  const modalClose = document.querySelector('.modal-close');
+
+  function openModal(title, desc, media){
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    modalContent.innerHTML = `
+      <h3 style="margin-top:0">${title}</h3>
+      <p style="color:var(--muted)">${desc}</p>
+      <div style="margin-top:12px">
+        <video controls autoplay style="width:100%;border-radius:10px">
+          <source src="${media}" type="video/mp4">
+          Ton navigateur ne supporte pas la vidéo.
+        </video>
+      </div>
+    `;
+    document.body.style.overflow = 'hidden';
+    modalClose.focus();
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    modalContent.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  projects.forEach(pr=>{
+    pr.addEventListener('click', ()=> openModal(pr.dataset.title, pr.dataset.desc, pr.dataset.media));
+    pr.addEventListener('keydown', (e)=> { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); pr.click(); } });
+  });
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=> { if(e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeModal(); });
+
+  // Contact form fallback
+  const form = document.getElementById('contactForm');
+  const formMessage = document.getElementById('formMessage');
+  if(form){
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = form.name.value.trim(), email = form.email.value.trim(), message = form.message.value.trim();
+      if(!name || !email || !message){ formMessage.textContent = 'Remplis tous les champs.'; return; }
+      const subject = encodeURIComponent('Demande de devis — ' + name);
+      const body = encodeURIComponent(`Nom: ${name}\nEmail: ${email}\n\n${message}`);
+      const mailto = `mailto:ton@exemple.com?subject=${subject}&body=${body}`;
+      formMessage.style.color = 'var(--muted)';
+      formMessage.textContent = 'Ouverture du client mail...';
+      setTimeout(()=> location.href = mailto, 400);
+    });
+  }
+
+  // Theme toggle (dark/light quick)
+  const themeToggle = document.getElementById('themeToggle');
+  let light = false;
+  themeToggle.addEventListener('click', ()=>{
+    light = !light;
+    if(light){
+      document.documentElement.style.setProperty('--bg','#f8fafc');
+      document.documentElement.style.setProperty('--card','#ffffff');
+      document.documentElement.style.setProperty('--muted','#475569');
+      document.documentElement.style.setProperty('--accent','#7c3aed');
+      document.body.style.color = '#071125';
+      themeToggle.classList.add('active');
+      themeToggle.textContent = 'Clair';
+    } else {
+      document.documentElement.style.setProperty('--bg','#05050a');
+      document.documentElement.style.setProperty('--card','#0f1216');
+      document.documentElement.style.setProperty('--muted','#a7b0bb');
+      document.documentElement.style.setProperty('--accent','#9b7bff');
+      document.body.style.color = '';
+      themeToggle.classList.remove('active');
+      themeToggle.textContent = 'Thème';
+    }
+  });
+
+  // Floating controls: music & particles & mute
+  const musicBtn = document.getElementById('musicBtn');
+  const particlesBtn = document.getElementById('particlesBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const audio = document.getElementById('bgMusic');
+  let musicPlaying = false;
+  let particlesOn = true;
+
+  musicBtn.addEventListener('click', ()=>{
+    musicPlaying = !musicPlaying;
+    if(musicPlaying){
+      audio.play().catch(()=>{/* autoplay blocked; user must click mute/play */});
+      musicBtn.classList.add('active');
+      musicBtn.title = 'Musique activée';
+    } else {
+      audio.pause();
+      musicBtn.classList.remove('active');
+      musicBtn.title = 'Musique désactivée';
+    }
+  });
+
+  particlesBtn.addEventListener('click', ()=>{
+    particlesOn = !particlesOn;
+    particlesBtn.classList.toggle('active', particlesOn);
+    window.setParticlesEnabled && window.setParticlesEnabled(particlesOn);
+    particlesBtn.title = particlesOn ? 'Particles ON' : 'Particles OFF';
+  });
+
+  muteBtn.addEventListener('click', ()=>{
+    audio.muted = !audio.muted;
+    muteBtn.textContent = audio.muted ? '🔇' : '🔈';
+    muteBtn.title = audio.muted ? 'Muet' : 'Son activé';
+  });
+
+  // small nav highlight on scroll
+  const navLinks = document.querySelectorAll('nav a');
+  const secs = document.querySelectorAll('main section');
+  window.addEventListener('scroll', ()=>{
+    const fromTop = scrollY + 120;
+    secs.forEach(s=>{
+      if(s.offsetTop <= fromTop && s.offsetTop + s.offsetHeight > fromTop){
+        navLinks.forEach(a=> a.classList.remove('active'));
+        const a = document.querySelector(`nav a[href="#${s.id}"]`);
+        if(a) a.classList.add('active');
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
