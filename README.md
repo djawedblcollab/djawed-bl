@@ -6,15 +6,20 @@ Portfolio professionnel de Djawed BL, monteur vidéo et motion designer, avec sy
 
 ```
 djawed-bl/
-├── portfolio site/         # Site portfolio (HTML/CSS/JS)
-│   └── index.html         # Portfolio avec vidéos et projets
-├── outreach/              # Système d'outreach automatisé
-│   ├── prospects.json     # Base de données des prospects
-│   ├── email-template.txt # Template d'email personnalisable
-│   ├── send-outreach.js   # Script d'envoi automatique
-│   └── README.md         # Documentation détaillée
-├── package.json          # Configuration Node.js
-└── README.md            # Ce fichier
+├── portfolio site/             # Site portfolio (HTML/CSS/JS)
+│   └── index.html             # Portfolio avec vidéos et projets
+├── outreach/                  # Système d'outreach automatisé
+│   ├── prospects.json         # Base de données des prospects
+│   ├── email-template.txt     # Template d'email personnalisable
+│   ├── send-outreach.js       # Script d'envoi (simulation)
+│   ├── send-outreach-with-email.js  # Script avec envoi réel
+│   ├── prospect-manager.html  # Interface web de gestion
+│   ├── .env.example          # Exemple de configuration
+│   ├── QUICK_START.md        # Guide de démarrage rapide
+│   └── README.md             # Documentation complète
+├── package.json              # Configuration Node.js
+├── .gitignore               # Protection des données sensibles
+└── README.md                # Ce fichier
 ```
 
 ## 🎬 Portfolio
@@ -37,6 +42,13 @@ Un système permettant d'envoyer automatiquement des messages professionnels à 
 
 ### Démarrage Rapide
 
+**Option 1 - Interface Web (Recommandé pour débuter):**
+```bash
+# Ouvrir l'interface de gestion
+open outreach/prospect-manager.html
+```
+
+**Option 2 - Ligne de commande:**
 ```bash
 # 1. Mode test (voir les emails sans les envoyer)
 npm run outreach:test
