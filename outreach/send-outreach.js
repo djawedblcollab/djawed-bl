@@ -63,7 +63,7 @@ if (isDryRun) {
 
 // Process each prospect
 toContact.forEach((prospect, index) => {
-  console.log(`\n[${ index + 1}/${toContact.length}] ${prospect.company}`);
+  console.log(`\n[${index + 1}/${toContact.length}] ${prospect.company}`);
   console.log(`   Email: ${prospect.email}`);
   console.log(`   Industrie: ${prospect.industry}`);
   

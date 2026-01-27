@@ -76,48 +76,52 @@ if (toContact.length === 0) {
 
 // Configure email transporter
 let transporter = null;
-if (!isDryRun && nodemailer) {
-  const emailConfig = {
-    service: process.env.EMAIL_SERVICE || 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+async function setupEmailTransporter() {
+  if (!isDryRun && nodemailer) {
+    const emailConfig = {
+      service: process.env.EMAIL_SERVICE || 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    };
+
+    if (!emailConfig.auth.user || !emailConfig.auth.pass) {
+      console.error('❌ Erreur: Configuration email manquante!');
+      console.error('   Créez un fichier .env avec:');
+      console.error('   EMAIL_USER=votre-email@gmail.com');
+      console.error('   EMAIL_PASS=votre-mot-de-passe-app');
+      console.error('   EMAIL_SERVICE=gmail\n');
+      process.exit(1);
     }
-  };
 
-  if (!emailConfig.auth.user || !emailConfig.auth.pass) {
-    console.error('❌ Erreur: Configuration email manquante!');
-    console.error('   Créez un fichier .env avec:');
-    console.error('   EMAIL_USER=votre-email@gmail.com');
-    console.error('   EMAIL_PASS=votre-mot-de-passe-app');
-    console.error('   EMAIL_SERVICE=gmail\n');
-    process.exit(1);
-  }
-
-  transporter = nodemailer.createTransport(emailConfig);
-  
-  // Verify connection
-  try {
-    await transporter.verify();
-    console.log('✅ Connexion au serveur email réussie!\n');
-  } catch (err) {
-    console.error('❌ Erreur de connexion au serveur email:', err.message);
-    process.exit(1);
+    transporter = nodemailer.createTransport(emailConfig);
+    
+    // Verify connection
+    try {
+      await transporter.verify();
+      console.log('✅ Connexion au serveur email réussie!\n');
+    } catch (err) {
+      console.error('❌ Erreur de connexion au serveur email:', err.message);
+      process.exit(1);
+    }
   }
 }
 
-console.log(`📊 Statistiques:`);
-console.log(`   Total prospects: ${prospects.length}`);
-console.log(`   Non contactés: ${prospects.filter(p => !p.contacted).length}`);
-console.log(`   À contacter maintenant: ${toContact.length}`);
-console.log();
+async function main() {
+  await setupEmailTransporter();
 
-if (isDryRun) {
-  console.log('🔍 MODE TEST (--dry-run): Aucun email ne sera envoyé\n');
-}
+  console.log(`📊 Statistiques:`);
+  console.log(`   Total prospects: ${prospects.length}`);
+  console.log(`   Non contactés: ${prospects.filter(p => !p.contacted).length}`);
+  console.log(`   À contacter maintenant: ${toContact.length}`);
+  console.log();
 
-// Process each prospect
-async function processProspects() {
+  if (isDryRun) {
+    console.log('🔍 MODE TEST (--dry-run): Aucun email ne sera envoyé\n');
+  }
+
+  // Process each prospect
   for (let i = 0; i < toContact.length; i++) {
     const prospect = toContact[i];
     console.log(`\n[${i + 1}/${toContact.length}] ${prospect.company}`);
@@ -185,7 +189,7 @@ async function processProspects() {
 }
 
 // Run the main process
-processProspects().catch(err => {
+main().catch(err => {
   console.error('\n❌ Erreur fatale:', err);
   process.exit(1);
 });
