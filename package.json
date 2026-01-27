@@ -6,7 +6,9 @@
   "scripts": {
     "outreach": "node outreach/send-outreach.js",
     "outreach:test": "node outreach/send-outreach.js --dry-run",
-    "outreach:send": "node outreach/send-outreach.js --limit 5"
+    "outreach:send": "node outreach/send-outreach.js --limit 5",
+    "outreach:email": "node outreach/send-outreach-with-email.js",
+    "outreach:email:test": "node outreach/send-outreach-with-email.js --dry-run"
   },
   "keywords": [
     "outreach",
@@ -21,5 +23,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/djawedblcollab/djawed-bl.git"
+  },
+  "optionalDependencies": {
+    "nodemailer": "^6.9.0",
+    "dotenv": "^16.3.0"
   }
 }

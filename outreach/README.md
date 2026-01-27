@@ -6,10 +6,12 @@ Ce système permet d'envoyer des messages automatiques à des entreprises pour t
 
 ```
 outreach/
-├── prospects.json          # Base de données des prospects
-├── email-template.txt      # Template d'email personnalisable
-├── send-outreach.js        # Script d'envoi automatique
-└── README.md              # Ce fichier
+├── prospects.json                # Base de données des prospects
+├── email-template.txt            # Template d'email personnalisable
+├── send-outreach.js              # Script d'envoi (simulation)
+├── send-outreach-with-email.js   # Script avec vrai envoi d'emails
+├── .env.example                  # Exemple de configuration email
+└── README.md                     # Ce fichier
 ```
 
 ## 🚀 Utilisation
@@ -37,15 +39,36 @@ Modifiez `email-template.txt` selon vos besoins. Utilisez `{{company}}` pour per
 
 ### 3. Lancer l'outreach
 
+**Option A: Mode Simulation (sans envoi réel)**
+
 ```bash
 # Mode test (affiche les emails sans les envoyer)
 node send-outreach.js --dry-run
 
-# Envoyer aux 5 premiers prospects non contactés
+# Simulation avec mise à jour de la base (marque comme contacté)
 node send-outreach.js --limit 5
+```
 
-# Envoyer à tous les prospects non contactés
-node send-outreach.js --limit 999
+**Option B: Envoi Réel d'Emails**
+
+1. Installez les dépendances:
+```bash
+npm install
+```
+
+2. Configurez vos identifiants email:
+```bash
+cp .env.example .env
+# Éditez .env avec vos informations
+```
+
+3. Lancez l'envoi:
+```bash
+# Mode test
+node send-outreach-with-email.js --dry-run
+
+# Envoi réel
+node send-outreach-with-email.js --limit 5
 ```
 
 ## 🔧 Options
@@ -55,7 +78,49 @@ node send-outreach.js --limit 999
 
 ## 📧 Intégration Email
 
-Pour envoyer réellement des emails, vous devez intégrer un service d'envoi d'emails.
+Deux options sont disponibles pour l'envoi d'emails:
+
+### 🎯 Option Recommandée: Script Intégré avec Nodemailer
+
+Le fichier `send-outreach-with-email.js` inclut déjà l'intégration email.
+
+**Configuration:**
+
+1. Copiez le fichier d'exemple:
+```bash
+cp .env.example .env
+```
+
+2. Éditez `.env` avec vos informations:
+```
+EMAIL_SERVICE=gmail
+EMAIL_USER=djawedblcontact@gmail.com
+EMAIL_PASS=votre-mot-de-passe-app
+```
+
+**Important pour Gmail:**
+- Activez la validation en 2 étapes
+- Créez un "mot de passe d'application": https://myaccount.google.com/apppasswords
+- N'utilisez JAMAIS votre mot de passe Gmail normal
+
+3. Installez les dépendances:
+```bash
+npm install
+```
+
+4. Testez:
+```bash
+npm run outreach:email:test
+```
+
+5. Envoyez:
+```bash
+npm run outreach:email
+```
+
+### 🔧 Option Alternative: Autres Services Email
+
+Pour envoyer réellement des emails, vous pouvez intégrer d'autres services.
 
 ### Option 1: Nodemailer (SMTP)
 
@@ -85,7 +150,7 @@ await transporter.sendMail({
 });
 ```
 
-### Option 2: SendGrid
+### SendGrid (Alternative)
 
 ```bash
 npm install @sendgrid/mail
@@ -103,7 +168,7 @@ await sgMail.send({
 });
 ```
 
-### Option 3: Mailgun
+### Mailgun (Alternative)
 
 ```bash
 npm install mailgun-js
