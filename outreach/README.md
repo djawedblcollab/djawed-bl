@@ -1,0 +1,164 @@
+# Système d'Outreach Automatisé
+
+Ce système permet d'envoyer des messages automatiques à des entreprises pour trouver des clients pour les services de montage vidéo.
+
+## 📁 Structure
+
+```
+outreach/
+├── prospects.json          # Base de données des prospects
+├── email-template.txt      # Template d'email personnalisable
+├── send-outreach.js        # Script d'envoi automatique
+└── README.md              # Ce fichier
+```
+
+## 🚀 Utilisation
+
+### 1. Ajouter des prospects
+
+Éditez le fichier `prospects.json` pour ajouter vos prospects:
+
+```json
+[
+  {
+    "id": 1,
+    "company": "Nom de l'entreprise",
+    "email": "contact@entreprise.com",
+    "industry": "Secteur d'activité",
+    "contacted": false,
+    "notes": "Notes sur le prospect"
+  }
+]
+```
+
+### 2. Personnaliser le message
+
+Modifiez `email-template.txt` selon vos besoins. Utilisez `{{company}}` pour personnaliser avec le nom de l'entreprise.
+
+### 3. Lancer l'outreach
+
+```bash
+# Mode test (affiche les emails sans les envoyer)
+node send-outreach.js --dry-run
+
+# Envoyer aux 5 premiers prospects non contactés
+node send-outreach.js --limit 5
+
+# Envoyer à tous les prospects non contactés
+node send-outreach.js --limit 999
+```
+
+## 🔧 Options
+
+- `--dry-run` : Mode test, affiche les emails sans les envoyer
+- `--limit N` : Limite le nombre de prospects à contacter (défaut: 5)
+
+## 📧 Intégration Email
+
+Pour envoyer réellement des emails, vous devez intégrer un service d'envoi d'emails.
+
+### Option 1: Nodemailer (SMTP)
+
+```bash
+npm install nodemailer
+```
+
+Ajoutez dans `send-outreach.js`:
+
+```javascript
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'votre-email@gmail.com',
+    pass: 'votre-mot-de-passe-app'
+  }
+});
+
+// Dans la boucle:
+await transporter.sendMail({
+  from: 'djawedblcontact@gmail.com',
+  to: prospect.email,
+  subject: 'Services de Montage Vidéo Professionnel',
+  text: email
+});
+```
+
+### Option 2: SendGrid
+
+```bash
+npm install @sendgrid/mail
+```
+
+```javascript
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('VOTRE_API_KEY');
+
+await sgMail.send({
+  to: prospect.email,
+  from: 'djawedblcontact@gmail.com',
+  subject: 'Services de Montage Vidéo Professionnel',
+  text: email
+});
+```
+
+### Option 3: Mailgun
+
+```bash
+npm install mailgun-js
+```
+
+```javascript
+const mailgun = require('mailgun-js')({
+  apiKey: 'VOTRE_API_KEY',
+  domain: 'VOTRE_DOMAINE'
+});
+
+await mailgun.messages().send({
+  from: 'djawedblcontact@gmail.com',
+  to: prospect.email,
+  subject: 'Services de Montage Vidéo Professionnel',
+  text: email
+});
+```
+
+## ⚠️ Important
+
+1. **Respectez la législation**: Assurez-vous de respecter le RGPD et les lois anti-spam
+2. **Obtenez le consentement**: Idéalement, contactez seulement des entreprises qui ont accepté d'être contactées
+3. **Incluez un opt-out**: Permettez aux destinataires de se désabonner
+4. **Ne spammez pas**: Limitez le nombre d'emails envoyés par jour
+5. **Personnalisez**: Les messages personnalisés ont un meilleur taux de réponse
+
+## 📊 Suivi
+
+Le script met automatiquement à jour `prospects.json` avec:
+- `contacted: true` pour les prospects contactés
+- `contactedDate` : Date de contact
+
+## 💡 Conseils
+
+1. Recherchez des entreprises qui ont besoin de services vidéo:
+   - Agences marketing
+   - E-commerce
+   - Créateurs de contenu
+   - Entreprises tech
+   - Marques de mode
+
+2. Personnalisez vos messages:
+   - Mentionnez un projet spécifique de l'entreprise
+   - Expliquez comment vous pouvez les aider
+   - Soyez concis et professionnel
+
+3. Faites un suivi:
+   - Attendez 1-2 semaines avant un rappel
+   - Soyez courtois et respectueux
+   - Acceptez les refus avec professionnalisme
+
+## 📞 Support
+
+Pour toute question, contactez:
+- Email: djawedblcontact@gmail.com
+- Instagram: @flemor.xx
+- Twitter: @BlDjawed11176
