@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "company": "Example Tech Company",
+    "email": "contact@example.com",
+    "industry": "Technology",
+    "contacted": false,
+    "notes": "Potential client for corporate video editing"
+  },
+  {
+    "id": 2,
+    "company": "Marketing Agency XYZ",
+    "email": "hello@marketingagency.com",
+    "industry": "Marketing",
+    "contacted": false,
+    "notes": "May need social media content creation"
+  },
+  {
+    "id": 3,
+    "company": "E-commerce Brand",
+    "email": "info@ecommercebrand.com",
+    "industry": "E-commerce",
+    "contacted": false,
+    "notes": "Product video editing services"
+  }
+]
