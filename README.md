@@ -13,7 +13,9 @@ djawed-bl/
 │   ├── email-template.txt     # Template d'email personnalisable
 │   ├── send-outreach.js       # Script d'envoi (simulation)
 │   ├── send-outreach-with-email.js  # Script avec envoi réel
+│   ├── show-clients.js        # Visualisation des clients (CLI)
 │   ├── prospect-manager.html  # Interface web de gestion
+│   ├── client-dashboard.html  # Dashboard "Où sont mes clients?"
 │   ├── .env.example          # Exemple de configuration
 │   ├── QUICK_START.md        # Guide de démarrage rapide
 │   └── README.md             # Documentation complète
@@ -39,6 +41,30 @@ Le site portfolio présente :
 ### Qu'est-ce que c'est ?
 
 Un système permettant d'envoyer automatiquement des messages professionnels à des entreprises pour trouver de nouveaux clients pour les services de montage vidéo.
+
+### 📋 Où sont mes clients? (Nouveau!)
+
+**Visualisez rapidement vos prospects:**
+
+```bash
+# Voir tous vos clients/prospects
+npm run clients
+
+# Voir uniquement les contactés
+npm run clients:contacted
+
+# Voir uniquement ceux en attente
+npm run clients:pending
+
+# Voir les statistiques
+npm run clients:stats
+```
+
+**Interface visuelle:**
+```bash
+# Dashboard complet avec graphiques
+open outreach/client-dashboard.html
+```
 
 ### Démarrage Rapide
 

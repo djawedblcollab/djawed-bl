@@ -8,7 +8,11 @@
     "outreach:test": "node outreach/send-outreach.js --dry-run",
     "outreach:send": "node outreach/send-outreach.js --limit 5",
     "outreach:email": "node outreach/send-outreach-with-email.js",
-    "outreach:email:test": "node outreach/send-outreach-with-email.js --dry-run"
+    "outreach:email:test": "node outreach/send-outreach-with-email.js --dry-run",
+    "clients": "node outreach/show-clients.js",
+    "clients:contacted": "node outreach/show-clients.js --contacted",
+    "clients:pending": "node outreach/show-clients.js --pending",
+    "clients:stats": "node outreach/show-clients.js --stats"
   },
   "keywords": [
     "outreach",
