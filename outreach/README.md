@@ -10,9 +10,40 @@ outreach/
 ├── email-template.txt            # Template d'email personnalisable
 ├── send-outreach.js              # Script d'envoi (simulation)
 ├── send-outreach-with-email.js   # Script avec vrai envoi d'emails
+├── show-clients.js               # Visualisation CLI des clients
+├── client-dashboard.html         # Dashboard "Où sont mes clients?"
+├── prospect-manager.html         # Gestion des prospects
+├── CLIENT_GUIDE.md               # Guide de suivi des clients
 ├── .env.example                  # Exemple de configuration email
 └── README.md                     # Ce fichier
 ```
+
+## 📋 Où sont mes clients?
+
+**Nouveau!** Visualisez rapidement vos prospects et leur statut.
+
+### Commandes rapides
+
+```bash
+npm run clients              # Voir tous les clients
+npm run clients:contacted    # Uniquement les contactés
+npm run clients:pending      # Uniquement en attente
+npm run clients:stats        # Statistiques rapides
+```
+
+### Dashboard visuel
+
+```bash
+open client-dashboard.html   # Interface graphique complète
+```
+
+**Fonctionnalités:**
+- 📊 Statistiques en temps réel
+- 📈 Graphiques par secteur
+- 🔍 Recherche et filtres
+- 📥 Export CSV
+
+👉 **[Guide complet de suivi des clients](CLIENT_GUIDE.md)**
 
 ## 🚀 Utilisation
 
